@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "agora-python"
+  site-url: "https://Fewsats.github.io/agora-python"
+  description: "Agora Python SDK to interact with Fewsats+Agora backend"
+  repo-branch: main
+  repo-url: "https://github.com/Fewsats/agora-python"
