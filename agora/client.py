@@ -7,7 +7,7 @@ __all__ = ['Agora']
 
 # %% ../nbs/00_client.ipynb 2
 import httpx
-from typing import Dict, List, Optional
+from typing import Dict, List
 from .config import *
 from .crypto import *
 
@@ -66,8 +66,8 @@ class Agora:
         return response
         
     def search_products(self, query: str, count: int = 20, page: int = 1, 
-                         price_min: int = 0, price_max: Optional[int] = None, 
-                         sort: Optional[str] = None, order: Optional[str] = None) -> Dict:
+                         price_min: int = 0, price_max: int = None, 
+                         sort: str = None, order: str = None) -> Dict:
         """
         Search for products.
         
@@ -96,11 +96,12 @@ class Agora:
             params["sort"] = sort
         if order is not None:
             params["order"] = order
-            
+        
+        print(params)
         return self._make_request("GET", "search", params=params)
 
 
-# %% ../nbs/00_client.ipynb 6
+# %% ../nbs/00_client.ipynb 7
 @patch    
 def get_product_detail(self: Agora, slug: str) -> Dict:
     """
@@ -116,7 +117,7 @@ def get_product_detail(self: Agora, slug: str) -> Dict:
     return self._make_request("GET", "product-detail", params=params)
 
 
-# %% ../nbs/00_client.ipynb 8
+# %% ../nbs/00_client.ipynb 9
 @patch
 def get_cart(self: Agora) -> Dict:
     """
@@ -128,7 +129,7 @@ def get_cart(self: Agora) -> Dict:
     return self._make_request("GET", "cart")
 
 
-# %% ../nbs/00_client.ipynb 10
+# %% ../nbs/00_client.ipynb 11
 @patch
 def add_to_cart(self: Agora, slug: str, product_id: str, variant_id: str = None, quantity: int = 1) -> Dict:
     """
@@ -153,7 +154,7 @@ def add_to_cart(self: Agora, slug: str, product_id: str, variant_id: str = None,
     return self._make_request("POST", "cart/items", json=item)
 
 
-# %% ../nbs/00_client.ipynb 12
+# %% ../nbs/00_client.ipynb 13
 @patch
 def update_cart_item(self: Agora, slug: str, product_id: str, variant_id: str, quantity: int) -> Dict:
     """
@@ -179,7 +180,7 @@ def update_cart_item(self: Agora, slug: str, product_id: str, variant_id: str, q
     
 
 
-# %% ../nbs/00_client.ipynb 14
+# %% ../nbs/00_client.ipynb 15
 @patch
 def clear_cart(self: Agora) -> Dict:
     """
@@ -190,7 +191,7 @@ def clear_cart(self: Agora) -> Dict:
     """
     return self._make_request("DELETE", "cart")
 
-# %% ../nbs/00_client.ipynb 16
+# %% ../nbs/00_client.ipynb 17
 @patch
 def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_address: Dict,
             user: Dict, quantity: int = 1) -> Dict:
@@ -240,7 +241,7 @@ def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_a
     
     return self._make_request("POST", "buy-now", json=request_data)
 
-# %% ../nbs/00_client.ipynb 19
+# %% ../nbs/00_client.ipynb 20
 @patch
 def get_order(self: Agora, order_id: int) -> Dict:
     """
