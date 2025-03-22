@@ -21,7 +21,6 @@ d = { 'settings': { 'branch': 'main',
                               'agora.config._cfg_path': ('config.html#_cfg_path', 'agora/config.py'),
                               'agora.config.get_cfg': ('config.html#get_cfg', 'agora/config.py'),
                               'agora.config.save_cfg': ('config.html#save_cfg', 'agora/config.py')},
-            'agora.core': {'agora.core.foo': ('core.html#foo', 'agora/core.py')},
             'agora.crypto': { 'agora.crypto.from_pk_hex': ('crypto.html#from_pk_hex', 'agora/crypto.py'),
                               'agora.crypto.generate_keys': ('crypto.html#generate_keys', 'agora/crypto.py'),
                               'agora.crypto.priv_key_hex': ('crypto.html#priv_key_hex', 'agora/crypto.py')}}}
