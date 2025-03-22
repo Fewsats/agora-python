@@ -220,7 +220,6 @@ def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_a
             "firstname": "John",
             "lastname": "Doe",
             "email": "john@example.com",
-            "_id": "user123"
         }
         
         a.buy_now(product_id, variant_id, shipping_address, user)
@@ -241,7 +240,7 @@ def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_a
     
     return self._make_request("POST", "buy-now", json=request_data)
 
-# %% ../nbs/00_client.ipynb 20
+# %% ../nbs/00_client.ipynb 22
 @patch
 def get_order(self: Agora, order_id: int) -> Dict:
     """
