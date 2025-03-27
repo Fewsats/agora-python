@@ -266,3 +266,14 @@ def get_order(self: Agora, external_id: str) -> Dict:
         The order details.
     """
     return self._make_request("GET", f"orders/{external_id}")
+
+# %% ../nbs/00_client.ipynb 38
+@patch
+def get_user_info(self: Agora) -> Dict:
+    """
+    Get the current user's profile and shipping addresses.
+    
+    Returns:
+        Dict containing user profile info (firstname, lastname, email) and list of shipping addresses
+    """
+    return self._make_request("GET", "user/info")
