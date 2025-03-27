@@ -255,14 +255,14 @@ def get_user_orders(self: Agora) -> List[Dict]:
 
 # %% ../nbs/00_client.ipynb 35
 @patch
-def get_order(self: Agora, order_id: int) -> Dict:
+def get_order(self: Agora, external_id: str) -> Dict:
     """
     Get details for a specific order.
     
     Args:
-        order_id: The order ID.
+        external_id: The external ID of the order.
         
     Returns:
         The order details.
     """
-    return self._make_request("GET", f"orders/{order_id}")
+    return self._make_request("GET", f"orders/{external_id}")
