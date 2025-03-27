@@ -5,7 +5,7 @@
 # %% auto 0
 __all__ = ['Agora']
 
-# %% ../nbs/00_client.ipynb 2
+# %% ../nbs/00_client.ipynb 3
 import httpx
 from typing import Dict, List
 from .config import *
@@ -14,7 +14,7 @@ from .crypto import *
 from fastcore.utils import *
 
 
-# %% ../nbs/00_client.ipynb 4
+# %% ../nbs/00_client.ipynb 5
 class Agora:
     """
     Client for the Agora-Fewsats Marketplace API.
@@ -42,10 +42,10 @@ class Agora:
             self.pk, self.pub = generate_keys()
             save_cfg({'priv': priv_key_hex(self.pk)})
 
-        self.mongo_id = self.pub[:24] # agora uses mongoDB so the related user-objectId needs to be 24 characters
+        self.customer_user_id = self.pub[:24] # agora uses mongoDB so the related user-objectId needs to be 24 characters
 
         self.client = httpx.Client(timeout=30.0)
-        self.client.headers.update({"customuserid": self.mongo_id})
+        self.client.headers.update({"customuserid": self.customer_user_id})
 
     def _make_request(self, method: str, endpoint: str, **kwargs) -> httpx.Response:
         """
@@ -64,44 +64,46 @@ class Agora:
         
         
         return response
+
+# %% ../nbs/00_client.ipynb 8
+@patch
+def search_products(self: Agora, query: str, count: int = 20, page: int = 1, 
+                        price_min: int = 0, price_max: int = None, 
+                        sort: str = None, order: str = None) -> Dict:
+    """
+    Search for products.
+    
+    Args:
+        query: The search query.
+        count: The number of products to return per page.
+        page: The page number.
+        price_min: The minimum price.
+        price_max: The maximum price.
+        sort: The sort field.
+        order: The sort order.
         
-    def search_products(self, query: str, count: int = 20, page: int = 1, 
-                         price_min: int = 0, price_max: int = None, 
-                         sort: str = None, order: str = None) -> Dict:
-        """
-        Search for products.
-        
-        Args:
-            query: The search query.
-            count: The number of products to return per page.
-            page: The page number.
-            price_min: The minimum price.
-            price_max: The maximum price.
-            sort: The sort field.
-            order: The sort order.
-            
-        Returns:
-            The search results.
-        """
-        params = {
-            "q": query,
-            "count": count,
-            "page": page,
-            "price_min": price_min
-        }
-        
-        if price_max is not None:
-            params["price_max"] = price_max
-        if sort is not None:
-            params["sort"] = sort
-        if order is not None:
-            params["order"] = order
-        
-        print(params)
-        return self._make_request("GET", "search", params=params)
+    Returns:
+        The search results.
+    """
+    params = {
+        "q": query,
+        "count": count,
+        "page": page,
+        "price_min": price_min
+    }
+    
+    if price_max is not None:
+        params["price_max"] = price_max
+    if sort is not None:
+        params["sort"] = sort
+    if order is not None:
+        params["order"] = order
+    
+    print(params)
+    return self._make_request("GET", "search", params=params)
 
 
-# %% ../nbs/00_client.ipynb 7
+# %% ../nbs/00_client.ipynb 12
 @patch    
 def get_product_detail(self: Agora, slug: str) -> Dict:
     """
@@ -117,7 +119,7 @@ def get_product_detail(self: Agora, slug: str) -> Dict:
     return self._make_request("GET", "product-detail", params=params)
 
 
-# %% ../nbs/00_client.ipynb 9
+# %% ../nbs/00_client.ipynb 15
 @patch
 def get_cart(self: Agora) -> Dict:
     """
@@ -129,7 +131,7 @@ def get_cart(self: Agora) -> Dict:
     return self._make_request("GET", "cart")
 
 
-# %% ../nbs/00_client.ipynb 11
+# %% ../nbs/00_client.ipynb 18
 @patch
 def add_to_cart(self: Agora, slug: str, product_id: str, variant_id: str = None, quantity: int = 1) -> Dict:
     """
@@ -154,7 +156,7 @@ def add_to_cart(self: Agora, slug: str, product_id: str, variant_id: str = None,
     return self._make_request("POST", "cart/items", json=item)
 
 
-# %% ../nbs/00_client.ipynb 13
+# %% ../nbs/00_client.ipynb 21
 @patch
 def update_cart_item(self: Agora, slug: str, product_id: str, variant_id: str, quantity: int) -> Dict:
     """
@@ -180,7 +182,7 @@ def update_cart_item(self: Agora, slug: str, product_id: str, variant_id: str, q
     
 
 
-# %% ../nbs/00_client.ipynb 15
+# %% ../nbs/00_client.ipynb 23
 @patch
 def clear_cart(self: Agora) -> Dict:
     """
@@ -191,7 +193,7 @@ def clear_cart(self: Agora) -> Dict:
     """
     return self._make_request("DELETE", "cart")
 
-# %% ../nbs/00_client.ipynb 17
+# %% ../nbs/00_client.ipynb 26
 @patch
 def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_address: Dict,
             user: Dict, quantity: int = 1) -> Dict:
@@ -240,7 +242,18 @@ def buy_now(self: Agora, slug: str, product_id: str, variant_id: str, shipping_a
     
     return self._make_request("POST", "buy-now", json=request_data)
 
-# %% ../nbs/00_client.ipynb 22
+# %% ../nbs/00_client.ipynb 32
+@patch
+def get_user_orders(self: Agora) -> List[Dict]:
+    """
+    Get all orders for the current user.
+    
+    Returns:
+        A list of orders.
+    """
+    return self._make_request("GET", f"users/orders")
+
+# %% ../nbs/00_client.ipynb 35
 @patch
 def get_order(self: Agora, order_id: int) -> Dict:
     """
@@ -253,15 +266,3 @@ def get_order(self: Agora, order_id: int) -> Dict:
         The order details.
     """
     return self._make_request("GET", f"orders/{order_id}")
-    
-
-@patch
-def get_user_orders(self: Agora) -> List[Dict]:
-    """
-    Get all orders for the current user.
-    
-    Returns:
-        A list of orders.
-    """
-    return self._make_request("GET", f"users/{self.customer_id}/orders")
-    
